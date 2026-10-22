@@ -1,0 +1,32 @@
+# Java / Maven
+target/
+*.class
+*.log
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Datasets and trained models are downloaded/generated, never committed (size + licensing)
+fraud-scoring-service/data/
+*.joblib
+
+# Secrets: never commit. Use .env.example as the template.
+.env
+*.pem
+*.tfvars
+!*.tfvars.example
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# IDEs / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store

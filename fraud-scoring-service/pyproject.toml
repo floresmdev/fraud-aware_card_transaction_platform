@@ -1,0 +1,31 @@
+# Python project definition (PEP 621). The equivalent of pom.xml for the scoring service.
+# `uv` reads this file, creates a virtual environment (.venv) and installs the dependencies,
+# pinning exact versions in uv.lock so every machine and CI run gets identical packages.
+[project]
+name = "fraud-scoring-service"
+version = "0.1.0"
+description = "Fraud scoring API: ML model + explainable rules -> score, decision, reasons"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "httpx2>=2.16",  # HTTP client used by FastAPI's TestClient
+    "ruff>=0.8",    # linter + formatter
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: pycodestyle + pyflakes, I: import sorting, B: bugbear (likely bugs), UP: modern syntax
+select = ["E", "F", "I", "B", "UP"]

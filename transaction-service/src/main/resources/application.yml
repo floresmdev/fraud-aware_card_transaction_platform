@@ -1,0 +1,46 @@
+# Configuration for the Transaction Service.
+# Every value that differs between environments comes from an environment variable with a
+# local-development default: ${ENV_VAR:default}. In AWS (Phase 4) the real values, including the
+# database password, are injected from AWS Secrets Manager. No real secret is ever committed.
+
+spring:
+  application:
+    name: transaction-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/transactions}
+    username: ${DB_USERNAME:transactions}
+    password: ${DB_PASSWORD:local-dev-only}
+    hikari:
+      # Connection pool. Each connection is a PostgreSQL backend process (memory!), so this is
+      # small on purpose. Rule of thumb: connections ~ 2 x CPU cores of the DB server.
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      # Fail fast instead of letting requests pile up when the pool is exhausted.
+      connection-timeout: 3000
+  flyway:
+    # Apply db/migration/V*.sql on startup.
+    enabled: true
+  jackson:
+    # Instants as ISO-8601 strings ("2026-10-22T18:30:00Z"), never as numeric epoch timestamps.
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${PORT:8080}
+  # On SIGTERM (container stop / deploy), finish in-flight requests before exiting.
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Only what orchestrators need. Never expose env, heapdump, etc. publicly.
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        # /actuator/health/liveness and /actuator/health/readiness for ECS / Kubernetes.
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
